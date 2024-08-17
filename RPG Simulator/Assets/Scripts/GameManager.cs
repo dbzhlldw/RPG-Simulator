@@ -64,4 +64,14 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+
+    void PauseGame()
+    {
+        Time.timeScale = 0;
+    }
+
+    void ResumeGame()
+    {
+        Time.timeScale = 1;
+    }
 }

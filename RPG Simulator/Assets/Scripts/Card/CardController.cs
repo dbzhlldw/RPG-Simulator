@@ -11,6 +11,7 @@ public class CardController : MonoBehaviour
     public Button cardButton;
 
     private Sprite currentSprite;
+    public GameObject objectToActivate;
 
     void Start()
     {
@@ -44,10 +45,11 @@ public class CardController : MonoBehaviour
         cardRect.anchorMax = new Vector2(0.5f, 0.5f);
         cardRect.pivot = new Vector2(0.5f, 0.5f);
 
-        Sequence mySequence = DOTween.Sequence();
+        Sequence mySequence = DOTween.Sequence().SetUpdate(true);
         mySequence.AppendInterval(0.3f);
         mySequence.Append(transform.DOScale(new Vector3(1.8f, 1.8f, 1), 1.5f)); // Scale Up
         mySequence.Join(cardRect.DOAnchorPos(Vector2.zero, 1.5f)); // Move to Canvas center
+        mySequence.OnComplete(HideCanvasOnClick);
     }
 
     private void SetButtonColorNormal()
@@ -91,5 +93,28 @@ public class CardController : MonoBehaviour
             return currentSprite.name;
         }
         return "No sprite set";
+    }
+
+    void HideCanvasOnClick()
+    {
+        cardButton.onClick.RemoveListener(ShowCard);
+        cardButton.onClick.AddListener(HideCards);
+    }
+
+    void HideCards()
+    {
+        if (objectToActivate != null)
+        {
+            objectToActivate.SetActive(true);
+        }
+
+        if (transform.parent != null) // Check if there is a parent
+        {
+            transform.parent.gameObject.SetActive(false); // Deactivate the parent object
+        }
+        else
+        {
+            Debug.LogError("No parent found for this GameObject.");
+        }
     }
 }
