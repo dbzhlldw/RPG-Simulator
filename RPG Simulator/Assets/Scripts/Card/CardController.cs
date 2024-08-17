@@ -27,11 +27,13 @@ public class CardController : MonoBehaviour
 
         SetButtonColorSelected(); // This button
 
-        GameManager.Instance.SelectCard(this); // Call GameManager to record the card
+        GameManager.Instance.RecordCardSelection(currentSprite.name); // Call GameManager to record the card
 
         DisableOtherCards();
 
         StartSelectedCardAnimation();
+
+        GetComponent<RectTransform>().SetAsLastSibling(); // Ensure selected card is on top of other cards
     }
 
     void StartSelectedCardAnimation()

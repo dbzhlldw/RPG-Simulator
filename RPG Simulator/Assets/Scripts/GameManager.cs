@@ -1,11 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    private CardController lastSelectedCard;
+    public List<string> selectedCardNames = new List<string>(); // Record selected cards
+
+    [SerializeField] private Image avatarImage;
+    public Sprite[] avatarSprites;
 
     void Awake()
     {
@@ -20,23 +23,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SelectCard(CardController card)
+    public void RecordCardSelection(string cardName)
     {
-        if (lastSelectedCard != null)
-        {
-            
-        }
+        selectedCardNames.Add(cardName);
+        Debug.Log("Card selected: " + cardName);
 
-        lastSelectedCard = card;
-        Debug.Log("Selected card: " + card.GetCardName());
+        if (selectedCardNames.Count == 1)
+        {
+            UpdateAvatarImage(cardName);
+        }
     }
 
-    public string GetLastSelectedCardName()
+    public List<string> GetSelectedCardNames()
     {
-        if (lastSelectedCard != null)
+        return selectedCardNames;
+    }
+
+    private void UpdateAvatarImage(string cardName)
+    {
+        string avatarName = "Avatar_" + cardName.Substring(2); // e.g. "C_Chosen" -> "Avatar_Chosen"
+        Sprite newSprite = FindSpriteByName(avatarName);
+        if (newSprite != null)
         {
-            return lastSelectedCard.GetCardName();
+            avatarImage.sprite = newSprite;
         }
-        return "No card selected";
+        else
+        {
+            Debug.LogError("Sprite not found: " + avatarName);
+        }
+    }
+
+    private Sprite FindSpriteByName(string name)
+    {
+        foreach (Sprite sprite in avatarSprites)
+        {
+            if (sprite.name == name)
+            {
+                return sprite;
+            }
+        }
+        return null;
     }
 }
