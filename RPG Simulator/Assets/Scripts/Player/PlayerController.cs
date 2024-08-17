@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         moveController = GetComponent<MoveController>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -23,6 +24,10 @@ public class PlayerController : MonoBehaviour
         float moveInput = Input.GetAxis("Horizontal");
         moveController.Move(moveInput);
         animator?.SetFloat("speed", Mathf.Abs(moveInput));
+        if (moveInput != 0)
+        {
+            transform.localScale = new Vector3(Mathf.Sign(moveInput) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
     }
 
     private void event_PlayerHide(object[] args)
