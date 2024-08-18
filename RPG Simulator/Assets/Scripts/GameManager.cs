@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Text mushroomCountText;
 
     public Flowchart shopFlowchart;
+    public Flowchart endingFlowchart;
 
 
     void Awake()
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         UpdateFlowchartVariable();
+        UpdateEndingFlowchartVariable();
     }
 
     public void RecordCardSelection(string cardName)
@@ -129,6 +131,14 @@ public class GameManager : MonoBehaviour
         if (selectedCardNames.Count > 0)
         {
             shopFlowchart.SetStringVariable("Character", selectedCardNames[0]);
+        }
+    }
+
+    public void UpdateEndingFlowchartVariable()
+    {
+        if (selectedCardNames.Count > 0)
+        {
+            endingFlowchart.SetStringVariable("Ending", selectedCardNames[2]);
         }
     }
 }
