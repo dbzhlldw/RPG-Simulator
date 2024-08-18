@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Image avatarImage;
     public Sprite[] avatarSprites;
 
+    private int mushroomsCollected = 0;
+    [SerializeField] private Image mushroomIcon;
+    [SerializeField] private Text mushroomCountText;
+
     void Awake()
     {
         if (Instance == null)
@@ -73,5 +77,33 @@ public class GameManager : MonoBehaviour
     void ResumeGame()
     {
         Time.timeScale = 1;
+    }
+
+    public void RecordMushroomCollection()
+    {
+        mushroomsCollected++; // Increment the count of mushrooms collected
+        UpdateMushroomUI();
+        Debug.Log("Mushroom collected. Total mushrooms: " + mushroomsCollected);
+
+        // Add additional logic here if needed, such as updating UI or triggering events
+    }
+
+    // Optional: A method to get the current count of mushrooms collected
+    public int GetMushroomsCollected()
+    {
+        return mushroomsCollected;
+    }
+
+    private void UpdateMushroomUI()
+    {
+        if (mushroomsCollected > 0)
+        {
+            mushroomIcon.gameObject.SetActive(true);  // Make sure the mushroom icon is visible
+            mushroomCountText.text = mushroomsCollected.ToString();  // Update the text to the current count
+        }
+        else
+        {
+            mushroomIcon.gameObject.SetActive(false);  // Hide the icon if there are no mushrooms collected
+        }
     }
 }
