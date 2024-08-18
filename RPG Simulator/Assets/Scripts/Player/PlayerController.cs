@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Fungus;
 
 public class PlayerController : MonoBehaviour
 {
+    private GameManager gameManager;
     private MoveController moveController;
     //private Interactable currentInteractable; // Track the current interactable the player is looking at
     private Animator animator;
@@ -15,21 +18,30 @@ public class PlayerController : MonoBehaviour
     public float attackRange = 1f;
     public LayerMask enemyLayers;
     public int attackDamage = 3;
+    public Flowchart combatFlowchart;
+    public GameObject freezeEnemy;
+    public GameObject turnBasedCombat;
 
     void Awake()
     {
         moveController = GetComponent<MoveController>();
         animator = GetComponent<Animator>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
         HandleMovement();
 
-        if (!isDead && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        if (gameManager != null && gameManager.selectedCardNames.Count > 1
+            && gameManager.selectedCardNames[1] == "A_Real-time combat")
         {
-            StartCoroutine(Attack());
+            if (!isDead && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+            {
+                StartCoroutine(Attack());
+            }
         }
+        
     }
 
     private void HandleMovement()
@@ -67,6 +79,32 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead) return;
 
+        if (gameManager == null || gameManager.selectedCardNames.Count <= 1) return;
+
+        string combatType = gameManager.selectedCardNames[1];
+
+        switch (combatType)
+        {
+            case "A_Real-time combat":
+                ApplyDamage(damage);
+                break;
+            case "A_Turn-based combat":
+                freezeEnemy.SetActive(true);
+                turnBasedCombat.SetActive(true);
+                break;
+            case "A_Dice":
+                if (combatFlowchart != null)
+                {
+                    combatFlowchart.ExecuteBlock("StartCombat");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ApplyDamage(int damage)
+    {
         health -= damage;
         Debug.Log("Player took " + damage + " damage! Remaining health: " + health);
 
