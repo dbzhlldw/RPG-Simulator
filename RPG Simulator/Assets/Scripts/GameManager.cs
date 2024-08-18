@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Fungus;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Image mushroomIcon;
     [SerializeField] private Text mushroomCountText;
 
+    public Flowchart shopFlowchart;
+
+
     void Awake()
     {
         if (Instance == null)
@@ -25,6 +29,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void Update()
+    {
+        UpdateFlowchartVariable();
     }
 
     public void RecordCardSelection(string cardName)
@@ -94,6 +103,14 @@ public class GameManager : MonoBehaviour
         return mushroomsCollected;
     }
 
+    public void DecreaseMushroomCount()
+    {
+        mushroomsCollected -= 1;
+        if (mushroomsCollected < 0) mushroomsCollected = 0;  // Prevent negative values
+        UpdateMushroomUI();
+        Debug.Log("Mushrooms collected decreased to: " + mushroomsCollected);
+    }
+
     private void UpdateMushroomUI()
     {
         if (mushroomsCollected > 0)
@@ -104,6 +121,14 @@ public class GameManager : MonoBehaviour
         else
         {
             mushroomIcon.gameObject.SetActive(false);  // Hide the icon if there are no mushrooms collected
+        }
+    }
+
+    public void UpdateFlowchartVariable()
+    {
+        if (selectedCardNames.Count > 0)
+        {
+            shopFlowchart.SetStringVariable("Character", selectedCardNames[0]);
         }
     }
 }
